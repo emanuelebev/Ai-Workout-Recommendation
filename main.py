@@ -1,4 +1,6 @@
-# Import necessary libraries
+import tkinter as tk
+from tkinter import ttk
+from tkinter import messagebox
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
@@ -12,13 +14,6 @@ workouts = pd.DataFrame({
                     'Low-impact exercises focusing on core strength and flexibility',
                     'High-intensity interval training for burning fat and improving fitness']
 })
-
-# Sample user data (you can replace this with user input)
-user_preferences = {
-    'Goal': 'Weight loss',
-    'Experience Level': 'Beginner',
-    'Preferred Workout Type': 'Cardio'
-}
 
 # Preprocess the workout descriptions using TF-IDF vectorization
 tfidf_vectorizer = TfidfVectorizer(stop_words='english')
@@ -44,7 +39,44 @@ def recommend_workouts(user_preferences, cosine_sim=cosine_sim, workouts=workout
     
     return top_workouts
 
-# Get personalized workout recommendations for the user
-recommendations = recommend_workouts(user_preferences)
-print("Personalized Workout Recommendations:")
-print(recommendations)
+# Function to handle button click event
+def get_recommendations():
+    user_preferences = {
+        'Goal': goal_combobox.get(),
+        'Experience Level': experience_combobox.get(),
+        'Preferred Workout Type': workout_combobox.get()
+    }
+    recommendations = recommend_workouts(user_preferences)
+    messagebox.showinfo("Recommendations", f"Personalized Workout Recommendations: {', '.join(recommendations)}")
+
+# Create main window
+root = tk.Tk()
+root.title("Workout Recommendation System")
+
+# Create and add widgets to the main window
+goal_label = tk.Label(root, text="Fitness Goal:")
+goal_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
+goals = ['Weight Loss', 'Muscle Building', 'Flexibility', 'Stress Relief']
+goal_combobox = ttk.Combobox(root, values=goals, state="readonly")
+goal_combobox.current(0)
+goal_combobox.grid(row=0, column=1, padx=10, pady=5)
+
+experience_label = tk.Label(root, text="Experience Level:")
+experience_label.grid(row=1, column=0, padx=10, pady=5, sticky="w")
+experiences = ['Beginner', 'Intermediate', 'Advanced']
+experience_combobox = ttk.Combobox(root, values=experiences, state="readonly")
+experience_combobox.current(0)
+experience_combobox.grid(row=1, column=1, padx=10, pady=5)
+
+workout_label = tk.Label(root, text="Preferred Workout Type:")
+workout_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
+workout_types = ['Cardio', 'Strength Training', 'Yoga', 'Pilates', 'HIIT']
+workout_combobox = ttk.Combobox(root, values=workout_types, state="readonly")
+workout_combobox.current(0)
+workout_combobox.grid(row=2, column=1, padx=10, pady=5)
+
+recommend_button = tk.Button(root, text="Get Recommendations", command=get_recommendations)
+recommend_button.grid(row=3, column=0, columnspan=2, padx=10, pady=10)
+
+# Run the main event loop
+root.mainloop()

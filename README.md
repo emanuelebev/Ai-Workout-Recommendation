@@ -24,8 +24,8 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/emanuelebev/Whitening">
-    <img src="img/Whitening.png" alt="Logo" width="600" height="150">
+  <a href="https://github.com/emanuelebev/Ai-Workout-Recommendation">
+    <img src="img/Gym-Logo.jpeg" alt="Logo" width="200" height="180">
   </a>
 
 <h3 align="center">Workout Recommendation System</h3>

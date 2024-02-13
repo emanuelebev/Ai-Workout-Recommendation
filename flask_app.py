@@ -1,9 +1,8 @@
-from flask import Flask, render_template, request, send_file, make_response
+from flask import Flask, jsonify, render_template, request, send_file, make_response
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 import os
-import pdfkit
 
 app = Flask(__name__)
 
@@ -40,27 +39,15 @@ def recommend_exercises(user_preferences, cosine_sim=cosine_sim, workouts=workou
 def index():
     return render_template('index.html')
 
-@app.route('/recommendations', methods=['GET'])
+@app.route('/recommendations', methods=['POST'])
 def get_recommendations():
     user_preferences = {
         'Muscle Group': request.form['muscle_gp'],
         'Equipment': request.form['equipment']
     }
     recommendations = recommend_exercises(user_preferences)
-    
-    # Generate HTML content for recommendations
-    recommendations_html = '<h2>Recommendations:</h2>'
-    recommendations_html += recommendations.to_html(index=False)  # Convert DataFrame to HTML without index
+    return jsonify({'recommendations': recommendations.values.tolist()})
 
-    # Convert HTML to PDF
-    pdf_content = pdfkit.from_string(recommendations_html, False)
-
-    # Create response
-    response = make_response(pdf_content)
-    response.headers['Content-Type'] = 'application/pdf'
-    response.headers['Content-Disposition'] = 'attachment; filename=recommendations.pdf'
-
-    return response
 
 if __name__ == '__main__':
     app.run(debug=True)

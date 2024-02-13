@@ -12,8 +12,8 @@ workouts = pd.read_csv(dataset_path)
 
 # Preprocess the exercise descriptions using TF-IDF vectorization
 tfidf_vectorizer = TfidfVectorizer(stop_words='english')
-workouts['Description'] = workouts['Description'].fillna('')
-tfidf_matrix = tfidf_vectorizer.fit_transform(workouts['Description'])
+workouts['Exercise_Name'] = workouts['Exercise_Name'].fillna('')
+tfidf_matrix = tfidf_vectorizer.fit_transform(workouts['Exercise_Name'])
 
 # Calculate cosine similarity between exercise descriptions
 cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
@@ -21,10 +21,12 @@ cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
 # Function to recommend exercises based on user preferences
 def recommend_exercises(user_preferences, cosine_sim=cosine_sim, workouts=workouts):
     # Filter exercises based on user preferences
-    preferred_exercises = workouts[workouts['Workout'] == user_preferences['Preferred Workout Type']]
+    muscleGp_selected = workouts[workouts['muscle_gp'] == user_preferences['Muscle Group']]
+    equipment_selected = workouts[workouts['Equipment'] == user_preferences['Equipment']]
+    # Exercise_Name,Description_URL,Exercise_Image,Exercise_Image1,muscle_gp_details,muscle_gp,equipment_details,Equipment,Rating,Description
 
     # Sort exercises by similarity to preferred workout type
-    exercise_indices = preferred_exercises.index
+    exercise_indices = muscleGp_selected.index
     sim_scores = list(enumerate(cosine_sim[exercise_indices]))
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
 
@@ -41,9 +43,8 @@ def index():
 @app.route('/recommendations', methods=['POST'])
 def get_recommendations():
     user_preferences = {
-        'Goal': request.form['goal'],
-        'Experience Level': request.form['experience'],
-        'Preferred Workout Type': request.form['workout_type']
+        'Muscle Group': request.form['muscle_gp'],
+        'Equipment': request.form['equipment']
     }
     recommendations = recommend_exercises(user_preferences)
     return jsonify({'recommendations': recommendations.tolist()})
@@ -52,36 +53,3 @@ if __name__ == '__main__':
     app.run(debug=True)
 
 
-
-
-
-# # Read the CSV file into a pandas DataFrame
-# df = pd.read_csv("exercises.csv")
-
-# def filter_exercises(df, muscle_group=None, equipment=None, min_rating=None):
-#     filtered_df = df.copy()
-    
-#     if muscle_group:
-#         filtered_df = filtered_df[filtered_df['muscle_gp'] == muscle_group]
-    
-#     if equipment:
-#         filtered_df = filtered_df[filtered_df['Equipment'] == equipment]
-    
-#     if min_rating:
-#         filtered_df = filtered_df[filtered_df['Rating'] >= min_rating]
-    
-#     return filtered_df
-
-# def recommend_exercises(df, muscle_group=None, equipment=None, min_rating=None):
-#     filtered_df = filter_exercises(df, muscle_group, equipment, min_rating)
-    
-#     if len(filtered_df) == 0:
-#         return "No exercises found matching the criteria."
-    
-#     recommended_exercises = filtered_df.sample(min(3, len(filtered_df)))
-    
-#     return recommended_exercises[['Exercise_Name', 'Description_URL']]
-
-# # Example usage
-# recommendations = recommend_exercises(df, muscle_group='Quadriceps', min_rating=9.0)
-# print(recommendations)

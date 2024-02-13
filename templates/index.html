@@ -68,26 +68,42 @@
     <div class="container">
         <h1>Workout Recommendation System</h1>
         <form id="recommendation-form">
-            <label for="goal">Fitness Goal:</label>
-            <select name="goal" id="goal">
-                <option value="Weight Loss">Weight Loss</option>
-                <option value="Muscle Building">Muscle Building</option>
-                <option value="Flexibility">Flexibility</option>
-                <option value="Stress Relief">Stress Relief</option>
+            <label for="muscle_gp">Select Muscle Group:</label>
+            <select id="muscle_gp" name="muscle_gp">
+                <option value="Forearms">Forearms</option>
+                <option value="Quadriceps">Quadriceps</option>
+                <option value="Abdominals">Abdominals</option>
+                <option value="Lats">Lats</option>
+                <option value="Middle Back">Middle Back</option>
+                <option value="Lower Back">Lower Back</option>
+                <option value="Shoulders">Shoulders</option>
+                <option value="Biceps">Biceps</option>
+                <option value="Glutes">Glutes</option>
+                <option value="Triceps">Triceps</option>
+                <option value="Hamstrings">Hamstrings</option>
+                <option value="Neck">Neck</option>
+                <option value="Chest">Chest</option>
+                <option value="Traps">Traps</option>
+                <option value="Calves">Calves</option>
+                <option value="Abductors">Abductors</option>
+                <option value="Adductors">Adductors</option>
             </select>
-            <label for="experience">Experience Level:</label>
-            <select name="experience" id="experience">
-                <option value="Beginner">Beginner</option>
-                <option value="Intermediate">Intermediate</option>
-                <option value="Advanced">Advanced</option>
-            </select>
-            <label for="workout_type">Preferred Workout Type:</label>
-            <select name="workout_type" id="workout_type">
-                <option value="Cardio">Cardio</option>
-                <option value="Strength Training">Strength Training</option>
-                <option value="Yoga">Yoga</option>
-                <option value="Pilates">Pilates</option>
-                <option value="HIIT">HIIT</option>
+            <label for="equipment">Select Equipment:</label>
+            <select id="equipment" name="equipment">
+                <option value="Other">Other</option>
+                <option value="Machine">Machine</option>
+                <option value="Barbell">Barbell</option>
+                <option value="Dumbbell">Dumbbell</option>
+                <option value="Body Only">Body Only</option>
+                <option value="Kettlebells">Kettlebells</option>
+                <option value="Cable">Cable</option>
+                <option value="E-Z Curl Bar">E-Z Curl Bar</option>
+                <option value="None">None</option>
+                <option value="Bands">Bands</option>
+                <option value="Medicine Ball">Medicine Ball</option>
+                <option value="Cables">Cables</option>
+                <option value="Exercise Ball">Exercise Ball</option>
+                <option value="Weight Bench">Weight Bench</option>
             </select>
             <button type="submit">Get Recommendations</button>
         </form>

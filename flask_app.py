@@ -21,14 +21,15 @@ cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
 # Function to recommend exercises based on user preferences
 def recommend_exercises(user_preferences, cosine_sim=cosine_sim, workouts=workouts):
     # Filter exercises based on user preferences
-    muscleGp_selected = workouts[workouts['muscle_gp'] == user_preferences['Muscle Group']]
     equipment_selected = workouts[workouts['Equipment'] == user_preferences['Equipment']]
+    muscleGp_selected = equipment_selected[workouts['muscle_gp'] == user_preferences['Muscle Group']]
     # Exercise_Name,Description_URL,Exercise_Image,Exercise_Image1,muscle_gp_details,muscle_gp,equipment_details,Equipment,Rating,Description
 
     # Sort exercises by similarity to preferred workout type
     exercise_indices = muscleGp_selected.index
     sim_scores = list(enumerate(cosine_sim[exercise_indices]))
-    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+    # sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+    sim_scores = sorted(sim_scores, reverse=True)
 
     # Get top recommended exercises
     top_exercises_indices = [i[0] for i in sim_scores[:3]]  # Change 3 to the desired number of recommendations

@@ -60,3 +60,37 @@ def get_recommendations():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+
+
+# # Read the CSV file into a pandas DataFrame
+# df = pd.read_csv("exercises.csv")
+
+# def filter_exercises(df, muscle_group=None, equipment=None, min_rating=None):
+#     filtered_df = df.copy()
+    
+#     if muscle_group:
+#         filtered_df = filtered_df[filtered_df['muscle_gp'] == muscle_group]
+    
+#     if equipment:
+#         filtered_df = filtered_df[filtered_df['Equipment'] == equipment]
+    
+#     if min_rating:
+#         filtered_df = filtered_df[filtered_df['Rating'] >= min_rating]
+    
+#     return filtered_df
+
+# def recommend_exercises(df, muscle_group=None, equipment=None, min_rating=None):
+#     filtered_df = filter_exercises(df, muscle_group, equipment, min_rating)
+    
+#     if len(filtered_df) == 0:
+#         return "No exercises found matching the criteria."
+    
+#     recommended_exercises = filtered_df.sample(min(3, len(filtered_df)))
+    
+#     return recommended_exercises[['Exercise_Name', 'Description_URL']]
+
+# # Example usage
+# recommendations = recommend_exercises(df, muscle_group='Quadriceps', min_rating=9.0)
+# print(recommendations)

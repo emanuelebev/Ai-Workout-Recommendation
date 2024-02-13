@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, send_file, make_response
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 import os
+import pdfkit
 
 app = Flask(__name__)
 
@@ -22,18 +23,16 @@ cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
 def recommend_exercises(user_preferences, cosine_sim=cosine_sim, workouts=workouts):
     # Filter exercises based on user preferences
     equipment_selected = workouts[workouts['Equipment'] == user_preferences['Equipment']]
-    muscleGp_selected = equipment_selected[workouts['muscle_gp'] == user_preferences['Muscle Group']]
-    # Exercise_Name,Description_URL,Exercise_Image,Exercise_Image1,muscle_gp_details,muscle_gp,equipment_details,Equipment,Rating,Description
+    muscleGp_selected = equipment_selected[equipment_selected['muscle_gp'] == user_preferences['Muscle Group']]
 
     # Sort exercises by similarity to preferred workout type
     exercise_indices = muscleGp_selected.index
     sim_scores = list(enumerate(cosine_sim[exercise_indices]))
-    # sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
     sim_scores = sorted(sim_scores, reverse=True)
 
-    # Get top recommended exercises
-    top_exercises_indices = [i[0] for i in sim_scores[:3]]  # Change 3 to the desired number of recommendations
-    top_exercises = workouts.iloc[top_exercises_indices]['Exercise_Name']
+    # Get top recommended exercises with all columns
+    top_exercises_indices = [i[0] for i in sim_scores[:5]]  # Change 5 to the desired number of recommendations
+    top_exercises = workouts.iloc[top_exercises_indices]
 
     return top_exercises
 
@@ -41,16 +40,27 @@ def recommend_exercises(user_preferences, cosine_sim=cosine_sim, workouts=workou
 def index():
     return render_template('index.html')
 
-@app.route('/recommendations', methods=['POST'])
+@app.route('/recommendations', methods=['GET'])
 def get_recommendations():
     user_preferences = {
         'Muscle Group': request.form['muscle_gp'],
         'Equipment': request.form['equipment']
     }
     recommendations = recommend_exercises(user_preferences)
-    return jsonify({'recommendations': recommendations.tolist()})
+    
+    # Generate HTML content for recommendations
+    recommendations_html = '<h2>Recommendations:</h2>'
+    recommendations_html += recommendations.to_html(index=False)  # Convert DataFrame to HTML without index
+
+    # Convert HTML to PDF
+    pdf_content = pdfkit.from_string(recommendations_html, False)
+
+    # Create response
+    response = make_response(pdf_content)
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = 'attachment; filename=recommendations.pdf'
+
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-

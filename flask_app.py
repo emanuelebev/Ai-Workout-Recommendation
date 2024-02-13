@@ -2,47 +2,37 @@ from flask import Flask, render_template, request, jsonify
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
+import os
 
 app = Flask(__name__)
 
-# Sample workout data (you can replace this with your own dataset)
-workouts = pd.DataFrame({
-    'Workout': ['Cardio', 'Strength Training', 'Yoga', 'Pilates', 'HIIT', 'CrossFit', 'Running', 'Cycling', 'Swimming', 'Dance'],
-    'Description': ['Aerobic exercise for improving cardiovascular health',
-                    'Building muscle strength and endurance through resistance exercises',
-                    'Mind-body practice for flexibility, strength, and relaxation',
-                    'Low-impact exercises focusing on core strength and flexibility',
-                    'High-intensity interval training for burning fat and improving fitness',
-                    'High-intensity functional fitness training incorporating varied movements',
-                    'Running for cardiovascular fitness and endurance',
-                    'Cycling for cardiovascular health and lower body strength',
-                    'Swimming for full-body workout and cardiovascular health',
-                    'Expressive movement for fitness and artistic expression']
-})
+# Read the dataset from the "dataset" directory
+dataset_path = os.path.join("dataset", "exercise_data.csv")
+workouts = pd.read_csv(dataset_path)
 
-# Preprocess the workout descriptions using TF-IDF vectorization
+# Preprocess the exercise descriptions using TF-IDF vectorization
 tfidf_vectorizer = TfidfVectorizer(stop_words='english')
 workouts['Description'] = workouts['Description'].fillna('')
 tfidf_matrix = tfidf_vectorizer.fit_transform(workouts['Description'])
 
-# Calculate cosine similarity between workout descriptions
+# Calculate cosine similarity between exercise descriptions
 cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
 
-# Function to recommend workouts based on user preferences
-def recommend_workouts(user_preferences, cosine_sim=cosine_sim, workouts=workouts):
-    # Filter workouts based on user preferences
-    preferred_workouts = workouts[workouts['Workout'] == user_preferences['Preferred Workout Type']]
+# Function to recommend exercises based on user preferences
+def recommend_exercises(user_preferences, cosine_sim=cosine_sim, workouts=workouts):
+    # Filter exercises based on user preferences
+    preferred_exercises = workouts[workouts['Workout'] == user_preferences['Preferred Workout Type']]
 
-    # Sort workouts by similarity to preferred workout type
-    workout_indices = preferred_workouts.index
-    sim_scores = list(enumerate(cosine_sim[workout_indices]))
+    # Sort exercises by similarity to preferred workout type
+    exercise_indices = preferred_exercises.index
+    sim_scores = list(enumerate(cosine_sim[exercise_indices]))
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
 
-    # Get top recommended workouts
-    top_workouts_indices = [i[0] for i in sim_scores[:3]]  # Change 3 to the desired number of recommendations
-    top_workouts = workouts.iloc[top_workouts_indices]['Workout']
+    # Get top recommended exercises
+    top_exercises_indices = [i[0] for i in sim_scores[:3]]  # Change 3 to the desired number of recommendations
+    top_exercises = workouts.iloc[top_exercises_indices]['Exercise_Name']
 
-    return top_workouts
+    return top_exercises
 
 @app.route('/')
 def index():
@@ -55,11 +45,12 @@ def get_recommendations():
         'Experience Level': request.form['experience'],
         'Preferred Workout Type': request.form['workout_type']
     }
-    recommendations = recommend_workouts(user_preferences)
+    recommendations = recommend_exercises(user_preferences)
     return jsonify({'recommendations': recommendations.tolist()})
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 

@@ -7,12 +7,17 @@ app = Flask(__name__)
 
 # Sample workout data (you can replace this with your own dataset)
 workouts = pd.DataFrame({
-    'Workout': ['Cardio', 'Strength Training', 'Yoga', 'Pilates', 'HIIT'],
+    'Workout': ['Cardio', 'Strength Training', 'Yoga', 'Pilates', 'HIIT', 'CrossFit', 'Running', 'Cycling', 'Swimming', 'Dance'],
     'Description': ['Aerobic exercise for improving cardiovascular health',
                     'Building muscle strength and endurance through resistance exercises',
                     'Mind-body practice for flexibility, strength, and relaxation',
                     'Low-impact exercises focusing on core strength and flexibility',
-                    'High-intensity interval training for burning fat and improving fitness']
+                    'High-intensity interval training for burning fat and improving fitness',
+                    'High-intensity functional fitness training incorporating varied movements',
+                    'Running for cardiovascular fitness and endurance',
+                    'Cycling for cardiovascular health and lower body strength',
+                    'Swimming for full-body workout and cardiovascular health',
+                    'Expressive movement for fitness and artistic expression']
 })
 
 # Preprocess the workout descriptions using TF-IDF vectorization

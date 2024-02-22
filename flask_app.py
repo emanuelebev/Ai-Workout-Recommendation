@@ -3,10 +3,12 @@ import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 import os
+import numpy as np
 
 app = Flask(__name__)
 
 # Read the dataset from the "dataset" directory
+# dataset_path = "/home/emanuelebev/mysite/documents/exercise_data.csv"
 dataset_path = os.path.join("dataset", "exercise_data.csv")
 workouts = pd.read_csv(dataset_path)
 
@@ -32,6 +34,9 @@ def recommend_exercises(user_preferences, cosine_sim=cosine_sim, workouts=workou
     # Get top recommended exercises with all columns
     top_exercises_indices = [i[0] for i in sim_scores[:5]]  # Change 5 to the desired number of recommendations
     top_exercises = workouts.iloc[top_exercises_indices]
+    top_exercises['Description'] = np.where(top_exercises['Rating'] > 9, 'Intermediate', top_exercises['Description'])
+    top_exercises['Description'] = np.where(top_exercises['Rating'] < 8.5, 'Expert', top_exercises['Description'])
+
 
     return top_exercises
 
@@ -46,7 +51,18 @@ def get_recommendations():
         'Equipment': request.form['equipment']
     }
     recommendations = recommend_exercises(user_preferences)
-    return jsonify({'recommendations': recommendations.values.tolist()})
+    # Creating HTML table
+    json_recommendations = []
+    for index, row in recommendations.iterrows():
+        json_recommendations.append({
+            'Exercise': row['Exercise_Name'],
+            'Equipment': row['Equipment'],
+            'Description': row['Description'],
+            'Description_URL': row['Description_URL'],
+        })
+    
+    return jsonify({'recommendations': json_recommendations})
+    # return jsonify({'recommendations': recommendations.values.tolist()})
 
 
 if __name__ == '__main__':

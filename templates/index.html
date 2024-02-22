@@ -5,14 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Workout Recommendation System</title>
     <style>
+        .table-label {
+            font-size: 25px; 
+            font-weight: bold; 
+            text-align: center; 
+            margin-bottom: 10px; 
+        }
+        .table td {
+            padding: 5px 30px;
+            font-size: 17px;
+        }
+        .table th {
+            font-size: 22px;
+            margin-bottom: 10px; 
+        }
+        .table-responsive {
+            display: block;
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
             padding: 0;
+            font-size: 22px; 
         }
         .container {
-            max-width: 600px;
+            max-width: 80%;
             margin: 50px auto;
             background-color: #fff;
             padding: 20px;
@@ -121,11 +142,11 @@
                     data: formData,
                     success: function(response) {
                         var recommendations = response.recommendations;
-                        var recommendationsHtml = '<h2>Recommendations:</h2><ul>';
+                        var recommendationsHtml = '<div class="table-label">Workouts:</div><div class="table-responsive"><table class="table mx-auto"><tr><th>Exercise</th><th>Equipment</th><th>Difficulty</th><th>Link</th></tr>';
                         recommendations.forEach(function(recommendation) {
-                            recommendationsHtml += '<li>' + recommendation + '</li>';
+                            recommendationsHtml += '<tr><td>' + recommendation.Exercise + '</td><td>' + recommendation.Equipment + '</td><td>' + recommendation.Description + '</td><td><a href="' + recommendation.Description_URL + '" target="_blank">' + recommendation.Description_URL + '</a></td></tr>';
                         });
-                        recommendationsHtml += '</ul>';
+                        recommendationsHtml += '</table>';
                         $('#recommendations').html(recommendationsHtml);
                     }
                 });
